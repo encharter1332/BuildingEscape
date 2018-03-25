@@ -21,10 +21,36 @@ UGrabber::UGrabber()
 void UGrabber::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	UE_LOG(LogTemp, Warning, TEXT("Grabber Report reporting for duty!" ));
-	// ...
-	
+
+	UE_LOG(LogTemp, Warning, TEXT("Grabber Report reporting for duty!"));
+	PhysicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
+	if (PhysicsHandle)
+	{
+
+	}
+	else 
+	{
+		UE_LOG(LogTemp, Error, TEXT("PHYSICS HANDLE NOT FOUND ON %s"), *GetOwner()->GetName());
+
+
+	}
+	InputComponent = GetOwner()->FindComponentByClass<UInputComponent>();
+	if (InputComponent) {
+		InputComponent->BindAction("Grab", IE_Pressed, this, &UGrabber::Grab);
+		InputComponent->BindAction("Grab", IE_Released, this, &UGrabber::Release);
+	}
+		
+	else {
+		UE_LOG(LogTemp, Error, TEXT("IMPUT COMPONENT NOT FOUND ON %s"), *GetOwner()->GetName())
+	}
+}
+
+void UGrabber::Grab() {
+	UE_LOG(LogTemp, Warning, TEXT("Grabber Pressed!"));
+}
+
+void UGrabber::Release() {
+	UE_LOG(LogTemp, Warning, TEXT("Grabber Released!"));
 }
 
 
@@ -34,7 +60,7 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	FVector playerViewPoint;
 	FRotator playerViewPointRotation;
-	float Reach = 100.f;
+	
 
 	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(playerViewPoint,playerViewPointRotation);
 	//UE_LOG(LogTemp, Warning, TEXT("Player view is at position %s and rotation is %s"), *playerViewPoint.ToString(), *playerViewPointRotation.ToString());
