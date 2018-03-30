@@ -5,6 +5,7 @@
 #include "Engine/World.h"
 #include "Classes/Components/PrimitiveComponent.h"
 
+
 // Sets default values for this component's properties
 UOpenDoor::UOpenDoor()
 {
@@ -30,26 +31,17 @@ void UOpenDoor::BeginPlay()
 	
 }
 
-void UOpenDoor::OpenDoor()
-{
-	owner->SetActorRotation(FRotator(0.0f, openAngle, 0.0f));
-}
-
-void UOpenDoor::CloseDoor()
-{
-	owner->SetActorRotation(FRotator(0.0f, 0.0f, 0.0f));
-}
 
 // Called every frame
 void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	if (GetTotalMassOfActorsOnPlate() > 30.f) {
-		OpenDoor();
-		lastDoorOpenTime = GetWorld()->GetRealTimeSeconds();
+	if (GetTotalMassOfActorsOnPlate() > TriggerMass) {
+		OnOpenRequest.Broadcast();
 	}
-	if (GetWorld()->GetRealTimeSeconds() - lastDoorOpenTime >= doorCloseDelay) {
-		CloseDoor();
+	else
+	{
+		OnCloseRequest.Broadcast();
 	}
 
 	
